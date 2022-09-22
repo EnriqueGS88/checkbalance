@@ -3,7 +3,8 @@ import { ethers } from "ethers";
 import React, { useState, useEffect } from 'react';
 import nftContract from './contracts/Editorial.json';
 const NFT_CONTRACT_ADDRESS = '0x74D2707CE861Eb336C2bc779D4Ba92067E469363';
-
+const mumbai_chainId = '80001';
+const mumba_hex_chainId = '0x13881';
 
 function App() {
 
@@ -25,9 +26,10 @@ function App() {
     let chainId = await ethereum.request( { method: 'eth_chainId' } );
     console.log( "Connected to chain ", chainId );
 
-    const polygonChainId = "0x89";
-    if ( chainId !== polygonChainId ) {
-      alert( "Open Metamask and switch network to Polygon" );
+    // const polygonChainId = "0x89";
+    const mumbaiChainId = mumba_hex_chainId;
+    if ( chainId !== mumbaiChainId ) {
+      alert( "Open Metamask and switch network to Mumbai Polygon" );
     }
 
     // check if we are authorized to access the wallet
@@ -74,30 +76,27 @@ function App() {
   useEffect( () => {
     checkIfWalletIsConnected();
   }, [] );
-
-  // Hardcoded NFT Balance
-  const nftBalance = 1;
-
+  
   // Call balanceOf() function in contract to check NFT balance in connected wallet
-  // const nftBalance = async () => {
-  //   try {
-  //     if ( ethereum ) {
-  //       const provider = new ethers.providers.Web3Provider( ethereum );
-  //       const signer = provider.getSigner();
-  //       const connectedContract = new ethers.Contract( NFT_CONTRACT_ADDRESS, nftContract.abi, signer );
+  const nftBalance = async () => {
+    try {
+      const { ethereum } = window;
+      const provider = new ethers.providers.Web3Provider( ethereum );
+      const signer = provider.getSigner();
+      const tokenId = '0000000000000000001';
 
-  //       const tokenId = '1000000000000000000';
-  //       let balance = await connectedContract.balanceOf( currentAccount, tokenId );
+      const connectedContract = new ethers.Contract( NFT_CONTRACT_ADDRESS, nftContract.abi, signer );
 
-  //       console.log(`Your address ${address} has ${balance} NFT` );
+      const balance = await connectedContract.balanceOf( currentAccount, tokenId );
 
-  //     } else {
-  //       console.log( "You have to sign in to Ethereum first" );
-  //     }
-  //   } catch ( error ) {
-  //     console.log( error );
-  //   }
-  // }
+      console.log(`Your address ${currentAccount} has ${balance} NFT` );
+      
+      return balance;
+
+    } catch ( error ) {
+      console.log( "This error: ", error );
+    }
+  }
 
   // <div>Your balance is: { nftBalance } </div>
   // <button onClick={ nftBalance }>Get Balance</button>
@@ -107,7 +106,7 @@ function App() {
       <div>
         { currentAccount === "" ? ( 
           <button onClick={ connectWallet }>Sign In</button>
-          ) : ( <div>Your balance is: { nftBalance } NFT</div> )
+          ) : ( <button onClick={ nftBalance }>Get Balance</button> )
         }
         </div>
     </>
