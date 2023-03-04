@@ -1,8 +1,13 @@
 import './App.css';
 import { ethers } from "ethers";
 import React, { useState, useEffect } from 'react';
-import nftContract from './contracts/Editorial.json';
-const NFT_CONTRACT_ADDRESS = '0x74D2707CE861Eb336C2bc779D4Ba92067E469363';
+// import nftContract from './contracts/Editorial.json';
+import nftContract from './contracts/EditorialBookStandard.json';
+// const NFT_CONTRACT_ADDRESS = '0x74D2707CE861Eb336C2bc779D4Ba92067E469363';
+
+const CONTRACT_ADDRESS_STANDARD = '0x54521635D4dEd541998750bc45e68C07c42A53E9';
+const CONTRACT_ADDRESS_PREMIUM = '0x315cD7C85207994ad4E84963619aa8507C858102';
+
 const mumbai_chainId = '80001';
 const mumba_hex_chainId = '0x13881';
 
@@ -83,11 +88,11 @@ function App() {
       const { ethereum } = window;
       const provider = new ethers.providers.Web3Provider( ethereum );
       const signer = provider.getSigner();
-      const tokenId = '0000000000000000001';
+      // const tokenId = '0000000000000000001';
 
-      const connectedContract = new ethers.Contract( NFT_CONTRACT_ADDRESS, nftContract.abi, signer );
+      const connectedContract = new ethers.Contract( CONTRACT_ADDRESS_STANDARD, nftContract.abi, signer );
 
-      const balance = await connectedContract.balanceOf( currentAccount, tokenId );
+      const balance = await connectedContract.balanceOf( currentAccount );
 
       console.log(`Your address ${currentAccount} has ${balance} NFT` );
       
