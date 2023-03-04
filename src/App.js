@@ -14,6 +14,8 @@ const mumba_hex_chainId = '0x13881';
 function App() {
 
   const [ currentAccount, setCurrentAccount ] = useState("");
+  const [ standardBalance, setStandardBalance ] = useState( "" );
+  const [ premiumBalance, setPremiumBalance ] = useState( "" );
 
   const checkIfWalletIsConnected = async () => {
 
@@ -88,13 +90,20 @@ function App() {
       const { ethereum } = window;
       const provider = new ethers.providers.Web3Provider( ethereum );
       const signer = provider.getSigner();
-      // const tokenId = '0000000000000000001';
 
-      const connectedContract = new ethers.Contract( CONTRACT_ADDRESS_STANDARD, nftContract.abi, signer );
+      let decimals = 0;
+
+      const connectedContract = new ethers.Contract( CONTRACT_ADDRESS_PREMIUM, nftContract.abi, signer );
 
       const balance = await connectedContract.balanceOf( currentAccount );
+      const stringBalance = ethers.BigNumber.from( balance._hex ).toString();
+      const formatedBalance = ethers.utils.formatUnits( stringBalance, decimals );
+      
+      console.log( formatedBalance );
 
       console.log(`Your address ${currentAccount} has ${balance} NFT` );
+
+      setStandardBalance( formatedBalance );
       
       return balance;
 
@@ -103,9 +112,6 @@ function App() {
     }
   }
 
-  // <div>Your balance is: { nftBalance } </div>
-  // <button onClick={ nftBalance }>Get Balance</button>
-
   return (
     <>
       <div>
@@ -113,7 +119,25 @@ function App() {
           <button onClick={ connectWallet }>Sign In</button>
           ) : ( <button onClick={ nftBalance }>Get Balance</button> )
         }
-        </div>
+      </div>
+
+      <div>
+        {
+           standardBalance === "" ? ("") : ( 
+           <div> You have { standardBalance } Standard NFTs </div>
+           )
+        }
+      </div>
+
+      <div>
+        {
+           premiumBalance === "" ? ("") : ( 
+           <div> You have { premiumBalance } Premium NFTs </div>
+           )
+        }
+      </div>
+
+
     </>
   );
 }
