@@ -84,6 +84,8 @@ function App() {
     checkIfWalletIsConnected();
   }, [] );
   
+
+
   // Call balanceOf() function in contract to check NFT balance in connected wallet
   const nftBalance = async () => {
     try {
@@ -93,17 +95,25 @@ function App() {
 
       let decimals = 0;
 
-      const connectedContract = new ethers.Contract( CONTRACT_ADDRESS_PREMIUM, nftContract.abi, signer );
-
+      // Get balance for Standard NFTs
+      const connectedContract = new ethers.Contract( CONTRACT_ADDRESS_STANDARD, nftContract.abi, signer );
       const balance = await connectedContract.balanceOf( currentAccount );
       const stringBalance = ethers.BigNumber.from( balance._hex ).toString();
       const formatedBalance = ethers.utils.formatUnits( stringBalance, decimals );
-      
-      console.log( formatedBalance );
-
-      console.log(`Your address ${currentAccount} has ${balance} NFT` );
-
       setStandardBalance( formatedBalance );
+
+      console.log(`Your address ${currentAccount} has ${formatedBalance} Standard NFT` );
+
+      // Get balance for Premium NFTs
+      const connectedContract2 = new ethers.Contract( CONTRACT_ADDRESS_PREMIUM, nftContract.abi, signer );
+      const premiumBalance = await connectedContract2.balanceOf( currentAccount );
+      const stringPremiumBalance = ethers.BigNumber.from( premiumBalance._hex ).toString();
+      const formatedPremiumBalance = ethers.utils.formatUnits( stringPremiumBalance, decimals );
+      setPremiumBalance( formatedPremiumBalance );
+
+      console.log(`Your address ${currentAccount} has ${formatedPremiumBalance} Premium Standard NFT` );
+
+
       
       return balance;
 
